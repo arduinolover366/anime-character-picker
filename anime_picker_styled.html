@@ -1,0 +1,134 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0d0d0f; color: #e8e6e3; font-family: var(--font-sans), sans-serif; min-height: 100vh; }
+h1 { font-size: 20px; font-weight: 500; letter-spacing: 0.02em; color: #e8e6e3; padding: 2rem 1.5rem 1.25rem; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 1.5rem 1.5rem; }
+select, input[type=number] {
+  background: #1a1a1e; border: 0.5px solid #2e2e34; color: #e8e6e3;
+  border-radius: 8px; padding: 0 12px; height: 38px; font-size: 14px;
+  outline: none; appearance: none; -webkit-appearance: none;
+  transition: border-color 0.15s;
+}
+select { min-width: 150px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; cursor: pointer; }
+input[type=number] { width: 70px; text-align: center; }
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+select:hover, input[type=number]:hover { border-color: #4a4a54; }
+select:focus, input[type=number]:focus { border-color: #5c5ce0; }
+button {
+  background: #5c5ce0; border: none; color: #fff; border-radius: 8px;
+  padding: 0 20px; height: 38px; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
+}
+button:hover { background: #4a4ad0; }
+button:active { transform: scale(0.97); background: #3a3ac0; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  padding: 0 1.5rem 2rem;
+}
+.card {
+  background: #1a1a1e;
+  border: 0.5px solid #2e2e34;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: default;
+}
+.card:hover { border-color: #5c5ce0; transform: translateY(-3px); }
+.card img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  display: block;
+  background: #111;
+}
+.card-img-placeholder {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+.card p {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #b0adaa;
+  text-align: center;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.empty { color: #555; font-size: 14px; text-align: center; padding: 3rem 1.5rem; grid-column: 1/-1; }
+@media (max-width: 480px) {
+  h1 { font-size: 17px; padding: 1.5rem 1rem 1rem; }
+  .controls { padding: 0 1rem 1.25rem; }
+  .grid { padding: 0 1rem 1.5rem; gap: 8px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Anime character picker — select a genre and count, then click Generate</h2>
+
+<h1>Anime character picker</h1>
+
+<div class="controls">
+  <select id="genreSelect">
+    <option value="Action">Action</option>
+    <option value="Adventure">Adventure</option>
+    <option value="Comedy">Comedy</option>
+    <option value="Drama">Drama</option>
+    <option value="Fantasy">Fantasy</option>
+    <option value="Psychological">Psychological</option>
+    <option value="Sci-Fi">Sci-Fi</option>
+    <option value="Romance">Romance</option>
+    <option value="Supernatural">Supernatural</option>
+  </select>
+  <input type="number" id="countInput" value="5" min="1" max="20">
+  <button onclick="generate()">Generate</button>
+</div>
+
+<div class="grid" id="results">
+  <p class="empty">Select a genre and hit Generate</p>
+</div>
+
+<script>
+let characters = [];
+
+fetch("anime_characters_updated.json")
+  .then(r => r.json())
+  .then(data => { characters = data; })
+  .catch(() => {});
+
+function generate() {
+  const genre = document.getElementById("genreSelect").value;
+  const count = Math.min(parseInt(document.getElementById("countInput").value) || 5, 20);
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = "";
+
+  const filtered = characters.filter(c => c.genre && c.genre.includes(genre));
+  const shuffled = [...filtered].sort(() => 0.5 - Math.random());
+  const selected = shuffled.slice(0, count);
+
+  if (!selected.length) {
+    resultsDiv.innerHTML = '<p class="empty">No characters found for this genre.</p>';
+    return;
+  }
+
+  selected.forEach(char => {
+    const card = document.createElement("div");
+    card.className = "card";
+    if (char.image) {
+      card.innerHTML = `<img src="${char.image}" alt="${char.name}" loading="lazy"><p>${char.name}</p>`;
+    } else {
+      card.innerHTML = `<div class="card-img-placeholder">?</div><p>${char.name}</p>`;
+    }
+    resultsDiv.appendChild(card);
+  });
+}
+</script>
