@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sketchbook</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0c;
+    --surface: #141414;
+    --border: #222;
+    --text: #d8d4cc;
+    --muted: #555;
+    --accent: #b8a878;
+    --white: #edeae2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(12,12,12,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'EB Garamond', serif;
+    font-size: 20px;
+    letter-spacing: 0.08em;
+    color: var(--white);
+  }
+
+  .nav-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    background: var(--surface);
+    width: 260px;
+    transition: border-color 0.2s;
+  }
+  .nav-search:focus-within { border-color: var(--accent); }
+  .nav-search input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+  }
+  .nav-search input::placeholder { color: var(--muted); }
+  .nav-search svg { color: var(--muted); flex-shrink: 0; }
+
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 380px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-left {
+    padding: 72px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .hero-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .hero-title {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(38px, 4.5vw, 58px);
+    line-height: 1.05;
+    color: var(--white);
+    font-weight: 400;
+  }
+  .hero-title em { font-style: italic; color: var(--accent); }
+
+  .hero-sub {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 300px;
+    font-weight: 300;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: fit-content;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent); color: var(--bg); }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    overflow: hidden;
+  }
+
+  .hero-cards {
+    position: relative;
+    width: 280px;
+    height: 340px;
+  }
+
+  .hero-card {
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    transition: transform 0.4s ease;
+  }
+  .hero-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top;
+    filter: grayscale(100%);
+    display: block;
+  }
+  .hero-card:nth-child(1) { width: 155px; height: 215px; top: 30px; left: 0; transform: rotate(-7deg); z-index: 1; }
+  .hero-card:nth-child(2) { width: 170px; height: 235px; top: 10px; left: 50%; transform: translateX(-50%) rotate(-1deg); z-index: 3; }
+  .hero-card:nth-child(3) { width: 155px; height: 215px; top: 40px; right: 0; transform: rotate(6deg); z-index: 2; }
+  .hero-cards:hover .hero-card:nth-child(1) { transform: rotate(-11deg) translateX(-6px) translateY(-4px); }
+  .hero-cards:hover .hero-card:nth-child(2) { transform: translateX(-50%) rotate(-1deg) translateY(-10px); }
+  .hero-cards:hover .hero-card:nth-child(3) { transform: rotate(10deg) translateX(6px) translateY(-4px); }
+
+  /* FILTERS */
+  .filters-bar {
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filters-bar::-webkit-scrollbar { display: none; }
+
+  .filter-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .pill {
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--text); }
+  .pill.active { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 500; }
+
+  /* GRID */
+  .grid-section { padding: 40px 48px 80px; }
+
+  .grid-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .grid-title {
+    font-family: 'EB Garamond', serif;
+    font-size: 20px;
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  .grid-count {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .char-card {
+    background: var(--bg);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .char-card:hover .char-card-img img { transform: scale(1.05); filter: grayscale(0%); }
+  .char-card:hover .char-overlay { opacity: 1; }
+
+  .char-card-img {
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    background: var(--surface);
+    position: relative;
+  }
+  .char-card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    filter: grayscale(30%);
+    transition: transform 0.4s ease, filter 0.3s ease;
+  }
+
+  .char-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(12,12,12,0.85) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: flex-end;
+    padding: 14px;
+  }
+
+  .char-like {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    line-height: 1;
+  }
+  .char-like:hover { color: #c45; transform: scale(1.2); }
+  .char-like.liked { color: #c45; }
+
+  .char-card-info {
+    padding: 10px 12px 12px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+  }
+  .char-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
+  .char-anime {
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .char-genre-tag {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+
+  /* LOAD MORE */
+  .load-more {
+    text-align: center;
+    margin-top: 48px;
+  }
+  .btn-load {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 32px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-load:hover { border-color: var(--accent); color: var(--accent); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .char-card { animation: fadeUp 0.4s ease both; }
+
+  @media (max-width: 1100px) { .cards-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 860px)  { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px)  {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    nav, .filters-bar, .grid-section, .hero-left { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Sketchbook</div>
+  <div class="nav-search">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search characters..." id="search-input" oninput="onSearch()">
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-label">Character Reference Library</p>
+    <h1 class="hero-title">Find Your<br>Next Character<br>to <em>Sketch.</em></h1>
+    <p class="hero-sub">200 anime characters, curated by genre and visual mood.</p>
+    <button class="btn-primary" onclick="document.querySelector('.grid-section').scrollIntoView({behavior:'smooth'})">
+      Browse All
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <div class="hero-right">
+    <div class="hero-cards" id="hero-cards"></div>
+  </div>
+</section>
+
+<div class="filters-bar" id="filters-bar">
+  <span class="filter-label">Genre</span>
+</div>
+
+<section class="grid-section">
+  <div class="grid-header">
+    <h2 class="grid-title">All Characters</h2>
+    <span class="grid-count" id="grid-count"></span>
+  </div>
+  <div class="cards-grid" id="cards-grid"></div>
+  <div class="load-more" id="load-more-wrap">
+    <button class="btn-load" onclick="loadMore()">
+      Load More
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </button>
+  </div>
+</section>
+
+<script>
+const ALL = [{"id":417,"name":"Lelouch Lamperouge","image":"https://cdn.myanimelist.net/images/characters/8/406163.jpg","anime":"Code Geass","genre":["Mecha","Action","Drama"]},{"id":40,"name":"Luffy Monkey D.","image":"https://cdn.myanimelist.net/images/characters/9/310307.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":45627,"name":"Levi","image":"https://cdn.myanimelist.net/images/characters/2/241413.jpg","anime":"Attack on Titan","genre":["Action","Dark Fantasy","Drama"]},{"id":71,"name":"L Lawliet","image":"https://cdn.myanimelist.net/images/characters/10/249647.jpg","anime":"Death Note","genre":["Psychological","Thriller"]},{"id":62,"name":"Zoro Roronoa","image":"https://cdn.myanimelist.net/images/characters/3/100534.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":27,"name":"Killua Zoldyck","image":"https://cdn.myanimelist.net/images/characters/2/327920.jpg","anime":"Hunter x Hunter","genre":["Adventure","Fantasy"]},{"id":35252,"name":"Rintarou Okabe","image":"https://cdn.myanimelist.net/images/characters/6/122643.jpg","anime":"Steins;Gate","genre":["Sci-Fi","Thriller"]},{"id":80,"name":"Light Yagami","image":"https://cdn.myanimelist.net/images/characters/6/63870.jpg","anime":"Death Note","genre":["Psychological","Thriller"]},{"id":11,"name":"Edward Elric","image":"https://cdn.myanimelist.net/images/characters/9/72533.jpg","anime":"Fullmetal Alchemist","genre":["Action","Fantasy"]},{"id":17,"name":"Naruto Uzumaki","image":"https://cdn.myanimelist.net/images/characters/2/284121.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":422,"name":"Guts","image":"https://cdn.myanimelist.net/images/characters/13/284125.jpg","anime":"Berserk","genre":["Dark Fantasy","Action"]},{"id":672,"name":"Gintoki Sakata","image":"https://cdn.myanimelist.net/images/characters/15/241479.jpg","anime":"Gintama","genre":["Comedy","Action"]},{"id":40882,"name":"Eren Yeager","image":"https://cdn.myanimelist.net/images/characters/10/216895.jpg","anime":"Attack on Titan","genre":["Action","Dark Fantasy","Drama"]},{"id":34470,"name":"Kurisu Makise","image":"https://cdn.myanimelist.net/images/characters/12/492885.jpg","anime":"Steins;Gate","genre":["Sci-Fi","Thriller"]},{"id":14,"name":"Itachi Uchiha","image":"https://cdn.myanimelist.net/images/characters/9/284122.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":164471,"name":"Satoru Gojou","image":"https://cdn.myanimelist.net/images/characters/15/422168.jpg","anime":"Jujutsu Kaisen","genre":["Action","Supernatural"]},{"id":40881,"name":"Mikasa Ackerman","image":"https://cdn.myanimelist.net/images/characters/9/215563.jpg","anime":"Attack on Titan","genre":["Action","Dark Fantasy","Drama"]},{"id":87275,"name":"Ken Kaneki","image":"https://cdn.myanimelist.net/images/characters/15/307255.jpg","anime":"Tokyo Ghoul","genre":["Dark Fantasy","Psychological"]},{"id":67065,"name":"Hachiman Hikigaya","image":"https://cdn.myanimelist.net/images/characters/4/203555.jpg","anime":"Oregairu","genre":["Romance","Slice of Life"]},{"id":85,"name":"Kakashi Hatake","image":"https://cdn.myanimelist.net/images/characters/7/284129.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":1,"name":"Spike Spiegel","image":"https://cdn.myanimelist.net/images/characters/11/516853.jpg","anime":"Cowboy Bebop","genre":["Sci-Fi","Action"]},{"id":73935,"name":"Saitama","image":"https://cdn.myanimelist.net/images/characters/11/294388.jpg","anime":"One Punch Man","genre":["Action","Comedy"]},{"id":118763,"name":"Rem","image":"https://cdn.myanimelist.net/images/characters/9/311327.jpg","anime":"Re:Zero","genre":["Fantasy","Drama"]},{"id":6356,"name":"Joseph Joestar","image":"https://cdn.myanimelist.net/images/characters/7/316615.jpg","anime":"JoJo's Bizarre Adventure","genre":["Action","Supernatural"]},{"id":117225,"name":"Megumin","image":"https://cdn.myanimelist.net/images/characters/14/349249.jpg","anime":"Konosuba","genre":["Comedy","Fantasy"]},{"id":109931,"name":"Arataka Reigen","image":"https://cdn.myanimelist.net/images/characters/16/308364.jpg","anime":"Mob Psycho 100","genre":["Action","Comedy","Supernatural"]},{"id":22037,"name":"Hitagi Senjougahara","image":"https://cdn.myanimelist.net/images/characters/11/287902.jpg","anime":"Monogatari","genre":["Supernatural","Drama"]},{"id":36765,"name":"Kazuto Kirigaya","image":"https://cdn.myanimelist.net/images/characters/7/204821.jpg","anime":"Sword Art Online","genre":["Action","Fantasy"]},{"id":118739,"name":"Mai Sakurajima","image":"https://cdn.myanimelist.net/images/characters/2/366639.jpg","anime":"Bunny Girl Senpai","genre":["Romance","Supernatural"]},{"id":84677,"name":"Yato","image":"https://cdn.myanimelist.net/images/characters/3/328158.jpg","anime":"Noragami","genre":["Supernatural","Action"]},{"id":68,"name":"Roy Mustang","image":"https://cdn.myanimelist.net/images/characters/11/510227.jpg","anime":"Fullmetal Alchemist","genre":["Action","Fantasy"]},{"id":141354,"name":"Violet Evergarden","image":"https://cdn.myanimelist.net/images/characters/9/345616.jpg","anime":"Violet Evergarden","genre":["Drama","Slice of Life"]},{"id":155679,"name":"Zero Two","image":"https://cdn.myanimelist.net/images/characters/14/559013.jpg","anime":"Darling in the Franxx","genre":["Mecha","Romance"]},{"id":5,"name":"Ichigo Kurosaki","image":"https://cdn.myanimelist.net/images/characters/3/512788.jpg","anime":"Bleach","genre":["Action","Supernatural"]},{"id":128909,"name":"Kiyotaka Ayanokouji","image":"https://cdn.myanimelist.net/images/characters/4/539058.jpg","anime":"Classroom of the Elite","genre":["Psychological","Drama"]},{"id":125056,"name":"Osamu Dazai","image":"https://cdn.myanimelist.net/images/characters/5/307236.jpg","anime":"Bungo Stray Dogs","genre":["Action","Supernatural"]},{"id":31,"name":"Hisoka Morow","image":"https://cdn.myanimelist.net/images/characters/3/174561.jpg","anime":"Hunter x Hunter","genre":["Adventure","Fantasy"]},{"id":10138,"name":"Thorfinn","image":"https://cdn.myanimelist.net/images/characters/9/309871.jpg","anime":"Vinland Saga","genre":["Historical","Action"]},{"id":2075,"name":"Kamina","image":"https://cdn.myanimelist.net/images/characters/7/83946.jpg","anime":"Gurren Lagann","genre":["Action","Sci-Fi"]},{"id":434,"name":"Eikichi Onizuka","image":"https://cdn.myanimelist.net/images/characters/8/241475.jpg","anime":"GTO","genre":["Comedy","Drama"]},{"id":497,"name":"Saber","image":"https://cdn.myanimelist.net/images/characters/6/275276.jpg","anime":"Fate","genre":["Action","Fantasy"]},{"id":23602,"name":"Shinobu Oshino","image":"https://cdn.myanimelist.net/images/characters/16/234167.jpg","anime":"Monogatari","genre":["Supernatural","Drama"]},{"id":305,"name":"Sanji","image":"https://cdn.myanimelist.net/images/characters/5/136769.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":12064,"name":"Taiga Aisaka","image":"https://cdn.myanimelist.net/images/characters/11/514086.jpg","anime":"Toradora","genre":["Romance","Comedy"]},{"id":184947,"name":"Frieren","image":"https://cdn.myanimelist.net/images/characters/7/525105.jpg","anime":"Frieren: Beyond Journey's End","genre":["Fantasy","Drama"]},{"id":94,"name":"Asuka Langley Souryuu","image":"https://cdn.myanimelist.net/images/characters/12/79465.jpg","anime":"Neon Genesis Evangelion","genre":["Mecha","Psychological"]},{"id":22036,"name":"Koyomi Araragi","image":"https://cdn.myanimelist.net/images/characters/16/559456.jpg","anime":"Monogatari","genre":["Supernatural","Comedy"]},{"id":246,"name":"Gokuu Son","image":"https://cdn.myanimelist.net/images/characters/15/72546.jpg","anime":"Dragon Ball","genre":["Action","Adventure"]},{"id":13020,"name":"Askeladd","image":"https://cdn.myanimelist.net/images/characters/14/401940.jpg","anime":"Vinland Saga","genre":["Historical","Action"]},{"id":13,"name":"Sasuke Uchiha","image":"https://cdn.myanimelist.net/images/characters/9/131317.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":36828,"name":"Asuna Yuuki","image":"https://cdn.myanimelist.net/images/characters/15/262053.jpg","anime":"Sword Art Online","genre":["Action","Fantasy"]},{"id":4963,"name":"Yuno Gasai","image":"https://cdn.myanimelist.net/images/characters/5/280576.jpg","anime":"Future Diary","genre":["Thriller","Psychological"]},{"id":601,"name":"Alucard","image":"https://cdn.myanimelist.net/images/characters/15/74607.jpg","anime":"Hellsing","genre":["Action","Supernatural"]},{"id":7373,"name":"Holo","image":"https://cdn.myanimelist.net/images/characters/15/319492.jpg","anime":"Spice and Wolf","genre":["Fantasy","Romance"]},{"id":46496,"name":"Erwin Smith","image":"https://cdn.myanimelist.net/images/characters/14/559023.jpg","anime":"Attack on Titan","genre":["Action","Dark Fantasy","Drama"]},{"id":1111,"name":"C.C.","image":"https://cdn.myanimelist.net/images/characters/13/33815.jpg","anime":"Code Geass","genre":["Mecha","Action","Drama"]},{"id":109929,"name":"Shigeo Kageyama","image":"https://cdn.myanimelist.net/images/characters/6/343344.jpg","anime":"Mob Psycho 100","genre":["Action","Comedy","Supernatural"]},{"id":719,"name":"Johan Liebert","image":"https://cdn.myanimelist.net/images/characters/4/316522.jpg","anime":"Monster","genre":["Psychological","Thriller"]},{"id":38005,"name":"Homura Akemi","image":"https://cdn.myanimelist.net/images/characters/16/526748.jpg","anime":"Madoka Magica","genre":["Psychological","Fantasy"]},{"id":4003,"name":"Joutarou Kuujou","image":"https://cdn.myanimelist.net/images/characters/9/312302.jpg","anime":"JoJo's Bizarre Adventure","genre":["Action","Supernatural"]},{"id":136359,"name":"Kaguya Shinomiya","image":"https://cdn.myanimelist.net/images/characters/2/504723.jpg","anime":"Kaguya-sama Love is War","genre":["Romance","Comedy"]},{"id":28,"name":"Kurapika","image":"https://cdn.myanimelist.net/images/characters/3/549312.jpg","anime":"Hunter x Hunter","genre":["Adventure","Fantasy"]},{"id":117909,"name":"Izuku Midoriya","image":"https://cdn.myanimelist.net/images/characters/7/299404.jpg","anime":"My Hero Academia","genre":["Action","Superhero"]},{"id":166439,"name":"Marin Kitagawa","image":"https://cdn.myanimelist.net/images/characters/3/514695.jpg","anime":"My Dress-Up Darling","genre":["Romance","Slice of Life"]},{"id":118735,"name":"Subaru Natsuki","image":"https://cdn.myanimelist.net/images/characters/15/315153.jpg","anime":"Re:Zero","genre":["Fantasy","Drama"]},{"id":146156,"name":"Tanjirou Kamado","image":"https://cdn.myanimelist.net/images/characters/6/386735.jpg","anime":"Demon Slayer","genre":["Action","Dark Fantasy"]},{"id":69411,"name":"Kaori Miyazono","image":"https://cdn.myanimelist.net/images/characters/14/269375.jpg","anime":"Your Lie in April","genre":["Romance","Drama"]},{"id":118489,"name":"Shouto Todoroki","image":"https://cdn.myanimelist.net/images/characters/12/332527.jpg","anime":"My Hero Academia","genre":["Action","Superhero"]},{"id":498,"name":"Rin Toosaka","image":"https://cdn.myanimelist.net/images/characters/2/270529.jpg","anime":"Fate","genre":["Action","Fantasy"]},{"id":90291,"name":"Kusuo Saiki","image":"https://cdn.myanimelist.net/images/characters/12/337932.jpg","anime":"The Disastrous Life of Saiki K.","genre":["Comedy","Supernatural"]},{"id":117911,"name":"Katsuki Bakugou","image":"https://cdn.myanimelist.net/images/characters/12/299406.jpg","anime":"My Hero Academia","genre":["Action","Superhero"]},{"id":131549,"name":"Rimuru Tempest","image":"https://cdn.myanimelist.net/images/characters/4/495795.jpg","anime":"That Time I Got Reincarnated as a Slime","genre":["Fantasy","Adventure"]},{"id":148984,"name":"Senkuu Ishigami","image":"https://cdn.myanimelist.net/images/characters/4/478454.jpg","anime":"Dr. Stone","genre":["Sci-Fi","Adventure"]},{"id":155904,"name":"Maomao","image":"https://cdn.myanimelist.net/images/characters/16/371204.jpg","anime":"The Apothecary Diaries","genre":["Historical","Drama"]},{"id":61,"name":"Robin Nico","image":"https://cdn.myanimelist.net/images/characters/16/363700.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":118737,"name":"Emilia","image":"https://cdn.myanimelist.net/images/characters/16/551926.jpg","anime":"Re:Zero","genre":["Fantasy","Drama"]},{"id":67067,"name":"Yukino Yukinoshita","image":"https://cdn.myanimelist.net/images/characters/4/202721.jpg","anime":"Oregairu","genre":["Romance","Slice of Life"]},{"id":170733,"name":"Power","image":"https://cdn.myanimelist.net/images/characters/7/494969.jpg","anime":"Chainsaw Man","genre":["Action","Dark Fantasy"]},{"id":70069,"name":"Kurumi Tokisaki","image":"https://cdn.myanimelist.net/images/characters/8/310255.jpg","anime":"Date A Live","genre":["Action","Supernatural"]},{"id":458,"name":"Revy","image":"https://cdn.myanimelist.net/images/characters/10/78871.jpg","anime":"Black Lagoon","genre":["Action","Thriller"]},{"id":170732,"name":"Denji","image":"https://cdn.myanimelist.net/images/characters/3/492407.jpg","anime":"Chainsaw Man","genre":["Action","Dark Fantasy"]},{"id":55131,"name":"Houtarou Oreki","image":"https://cdn.myanimelist.net/images/characters/15/308148.jpg","anime":"Hyouka","genre":["Slice of Life","Mystery"]},{"id":24596,"name":"Izaya Orihara","image":"https://cdn.myanimelist.net/images/characters/12/313152.jpg","anime":"Durarara!!","genre":["Action","Thriller"]},{"id":30,"name":"Gon Freecss","image":"https://cdn.myanimelist.net/images/characters/11/174517.jpg","anime":"Hunter x Hunter","genre":["Adventure","Fantasy"]},{"id":10863,"name":"Sebastian Michaelis","image":"https://cdn.myanimelist.net/images/characters/6/44160.jpg","anime":"Black Butler","genre":["Action","Supernatural"]},{"id":5187,"name":"Natsu Dragneel","image":"https://cdn.myanimelist.net/images/characters/15/594274.jpg","anime":"Fairy Tail","genre":["Action","Fantasy"]},{"id":160603,"name":"Miku Nakano","image":"https://cdn.myanimelist.net/images/characters/15/507743.jpg","anime":"The Quintessential Quintuplets","genre":["Romance","Comedy"]},{"id":143185,"name":"Yuu Ishigami","image":"https://cdn.myanimelist.net/images/characters/7/372840.jpg","anime":"Kaguya-sama Love is War","genre":["Romance","Comedy"]},{"id":86,"name":"Rei Ayanami","image":"https://cdn.myanimelist.net/images/characters/11/314932.jpg","anime":"Neon Genesis Evangelion","genre":["Mecha","Psychological"]},{"id":13767,"name":"Law Trafalgar","image":"https://cdn.myanimelist.net/images/characters/10/258757.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":46494,"name":"Armin Arlert","image":"https://cdn.myanimelist.net/images/characters/8/220267.jpg","anime":"Attack on Titan","genre":["Action","Dark Fantasy","Drama"]},{"id":913,"name":"Vegeta","image":"https://cdn.myanimelist.net/images/characters/14/86185.jpg","anime":"Dragon Ball","genre":["Action","Adventure"]},{"id":117221,"name":"Kazuma Satou","image":"https://cdn.myanimelist.net/images/characters/8/301302.jpg","anime":"Konosuba","genre":["Comedy","Fantasy"]},{"id":89,"name":"Shinji Ikari","image":"https://cdn.myanimelist.net/images/characters/5/225177.jpg","anime":"Neon Genesis Evangelion","genre":["Mecha","Psychological"]},{"id":71121,"name":"Hange Zoë","image":"https://cdn.myanimelist.net/images/characters/15/208637.jpg","anime":"Attack on Titan","genre":["Action","Dark Fantasy","Drama"]},{"id":65643,"name":"Koro-sensei","image":"https://cdn.myanimelist.net/images/characters/9/277325.jpg","anime":"Assassination Classroom","genre":["Comedy","Action"]},{"id":50389,"name":"Rias Gremory","image":"https://cdn.myanimelist.net/images/characters/5/150011.jpg","anime":"High School DxD","genre":["Action","Supernatural"]},{"id":6194,"name":"Musashi Miyamoto","image":"https://cdn.myanimelist.net/images/characters/9/557004.jpg","anime":"Vagabond","genre":["Historical","Action"]},{"id":11772,"name":"Gyro Zeppeli","image":"https://cdn.myanimelist.net/images/characters/13/311885.jpg","anime":"JoJo's Bizarre Adventure","genre":["Action","Supernatural"]},{"id":65865,"name":"Rikka Takanashi","image":"https://cdn.myanimelist.net/images/characters/2/257273.jpg","anime":"Chuunibyou","genre":["Romance","Comedy"]},{"id":64769,"name":"Shouyou Hinata","image":"https://cdn.myanimelist.net/images/characters/11/243919.jpg","anime":"Haikyuu!!","genre":["Slice of Life","Comedy"]},{"id":5189,"name":"Erza Scarlet","image":"https://cdn.myanimelist.net/images/characters/12/492254.jpg","anime":"Fairy Tail","genre":["Action","Fantasy"]},{"id":174185,"name":"Jin-Woo Sung","image":"https://cdn.myanimelist.net/images/characters/2/540692.jpg","anime":"Solo Leveling","genre":["Action","Fantasy"]},{"id":14523,"name":"Takumi Usui","image":"https://cdn.myanimelist.net/images/characters/7/591074.jpg","anime":"Maid-sama!","genre":["Romance","Comedy"]},{"id":2007,"name":"Shikamaru Nara","image":"https://cdn.myanimelist.net/images/characters/3/131315.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":1259,"name":"Misato Katsuragi","image":"https://cdn.myanimelist.net/images/characters/15/515181.jpg","anime":"Neon Genesis Evangelion","genre":["Mecha","Psychological"]},{"id":23277,"name":"Meruem","image":"https://cdn.myanimelist.net/images/characters/6/243861.jpg","anime":"Hunter x Hunter","genre":["Adventure","Fantasy"]},{"id":162,"name":"Vash the Stampede","image":"https://cdn.myanimelist.net/images/characters/10/89607.jpg","anime":"Trigun","genre":["Sci-Fi","Action"]},{"id":170734,"name":"Makima","image":"https://cdn.myanimelist.net/images/characters/4/489561.jpg","anime":"Chainsaw Man","genre":["Action","Dark Fantasy"]},{"id":163847,"name":"Yuuji Itadori","image":"https://cdn.myanimelist.net/images/characters/6/467646.jpg","anime":"Jujutsu Kaisen","genre":["Action","Supernatural"]},{"id":13701,"name":"Mikoto Misaka","image":"https://cdn.myanimelist.net/images/characters/16/569611.jpg","anime":"A Certain Magical Index","genre":["Action","Sci-Fi"]},{"id":206276,"name":"Hitori Gotou","image":"https://cdn.myanimelist.net/images/characters/4/509913.jpg","anime":"Bocchi the Rock","genre":["Slice of Life","Comedy"]},{"id":2257,"name":"Simon","image":"https://cdn.myanimelist.net/images/characters/10/28353.jpg","anime":"Gurren Lagann","genre":["Action","Sci-Fi"]},{"id":10010,"name":"Kiritsugu Emiya","image":"https://cdn.myanimelist.net/images/characters/4/474826.jpg","anime":"Fate/Zero","genre":["Action","Fantasy"]},{"id":309,"name":"Chopper Tony Tony","image":"https://cdn.myanimelist.net/images/characters/3/100536.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":75216,"name":"Souma Yukihira","image":"https://cdn.myanimelist.net/images/characters/8/277503.jpg","anime":"Food Wars","genre":["Comedy","Slice of Life"]},{"id":83797,"name":"Ryuuko Matoi","image":"https://cdn.myanimelist.net/images/characters/5/454530.jpg","anime":"Kill la Kill","genre":["Action","Comedy"]},{"id":146158,"name":"Zenitsu Agatsuma","image":"https://cdn.myanimelist.net/images/characters/10/459689.jpg","anime":"Demon Slayer","genre":["Action","Dark Fantasy"]},{"id":2160,"name":"Hei","image":"https://cdn.myanimelist.net/images/characters/8/78781.jpg","anime":"Darker than Black","genre":["Action","Supernatural"]},{"id":425,"name":"Ginko","image":"https://cdn.myanimelist.net/images/characters/14/303453.jpg","anime":"Mushishi","genre":["Supernatural","Slice of Life"]},{"id":80243,"name":"Shouko Nishimiya","image":"https://cdn.myanimelist.net/images/characters/5/302315.jpg","anime":"A Silent Voice","genre":["Drama","Romance"]},{"id":723,"name":"Nami","image":"https://cdn.myanimelist.net/images/characters/6/59914.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":71933,"name":"Karma Akabane","image":"https://cdn.myanimelist.net/images/characters/4/274913.jpg","anime":"Assassination Classroom","genre":["Comedy","Action"]},{"id":66173,"name":"Izumi Miyamura","image":"https://cdn.myanimelist.net/images/characters/12/507110.jpg","anime":"Horimiya","genre":["Romance","Slice of Life"]},{"id":118733,"name":"Sakuta Azusagawa","image":"https://cdn.myanimelist.net/images/characters/11/398261.jpg","anime":"Bunny Girl Senpai","genre":["Romance","Supernatural"]},{"id":4004,"name":"Dio Brando","image":"https://cdn.myanimelist.net/images/characters/8/330539.jpg","anime":"JoJo's Bizarre Adventure","genre":["Action","Supernatural"]},{"id":24595,"name":"Shizuo Heiwajima","image":"https://cdn.myanimelist.net/images/characters/5/110552.jpg","anime":"Durarara!!","genre":["Action","Thriller"]},{"id":61371,"name":"Mashiro Shiina","image":"https://cdn.myanimelist.net/images/characters/5/183449.jpg","anime":"Sakurasou no Pet na Kanojo","genre":["Romance","Comedy"]},{"id":424,"name":"Griffith","image":"https://cdn.myanimelist.net/images/characters/9/326322.jpg","anime":"Berserk","genre":["Dark Fantasy","Action"]},{"id":2514,"name":"Gilgamesh","image":"https://cdn.myanimelist.net/images/characters/12/338672.jpg","anime":"Fate","genre":["Action","Fantasy"]},{"id":251,"name":"Haruhi Suzumiya","image":"https://cdn.myanimelist.net/images/characters/13/284136.jpg","anime":"The Melancholy of Haruhi Suzumiya","genre":["Comedy","Supernatural"]},{"id":2219,"name":"Lain Iwakura","image":"https://cdn.myanimelist.net/images/characters/10/78358.jpg","anime":"Serial Experiments Lain","genre":["Sci-Fi","Psychological"]},{"id":2169,"name":"Konata Izumi","image":"https://cdn.myanimelist.net/images/characters/13/39208.jpg","anime":"Lucky Star","genre":["Comedy","Slice of Life"]},{"id":209,"name":"Kyou Souma","image":"https://cdn.myanimelist.net/images/characters/11/413334.jpg","anime":"Fruits Basket","genre":["Romance","Drama"]},{"id":140810,"name":"Chika Fujiwara","image":"https://cdn.myanimelist.net/images/characters/15/559031.jpg","anime":"Kaguya-sama Love is War","genre":["Romance","Comedy"]},{"id":127764,"name":"Yami Sukehiro","image":"https://cdn.myanimelist.net/images/characters/10/599705.jpg","anime":"Black Clover","genre":["Action","Fantasy"]},{"id":4606,"name":"Tomoya Okazaki","image":"https://cdn.myanimelist.net/images/characters/6/508343.jpg","anime":"Clannad","genre":["Romance","Drama"]},{"id":146159,"name":"Inosuke Hashibira","image":"https://cdn.myanimelist.net/images/characters/3/329560.jpg","anime":"Demon Slayer","genre":["Action","Dark Fantasy"]},{"id":12,"name":"Alphonse Elric","image":"https://cdn.myanimelist.net/images/characters/5/54265.jpg","anime":"Fullmetal Alchemist","genre":["Action","Fantasy"]},{"id":170256,"name":"Anya Forger","image":"https://cdn.myanimelist.net/images/characters/4/457933.jpg","anime":"Spy x Family","genre":["Comedy","Action"]},{"id":161472,"name":"Nino Nakano","image":"https://cdn.myanimelist.net/images/characters/7/437011.jpg","anime":"The Quintessential Quintuplets","genre":["Romance","Comedy"]},{"id":210,"name":"Kisuke Urahara","image":"https://cdn.myanimelist.net/images/characters/15/149491.jpg","anime":"Bleach","genre":["Action","Supernatural"]},{"id":909,"name":"Kenpachi Zaraki","image":"https://cdn.myanimelist.net/images/characters/8/150265.jpg","anime":"Bleach","genre":["Action","Supernatural"]},{"id":390,"name":"Mugen","image":"https://cdn.myanimelist.net/images/characters/5/51569.jpg","anime":"Samurai Champloo","genre":["Action","Historical"]},{"id":82523,"name":"Sora","image":"https://cdn.myanimelist.net/images/characters/12/274345.jpg","anime":"No Game No Life","genre":["Comedy","Fantasy"]},{"id":124731,"name":"Asta","image":"https://cdn.myanimelist.net/images/characters/8/312836.jpg","anime":"Black Clover","genre":["Action","Fantasy"]},{"id":2423,"name":"Jiraiya","image":"https://cdn.myanimelist.net/images/characters/15/68618.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":146157,"name":"Nezuko Kamado","image":"https://cdn.myanimelist.net/images/characters/2/378254.jpg","anime":"Demon Slayer","genre":["Action","Dark Fantasy"]},{"id":1086,"name":"Sousuke Aizen","image":"https://cdn.myanimelist.net/images/characters/16/73909.jpg","anime":"Bleach","genre":["Action","Supernatural"]},{"id":151143,"name":"Kyoujurou Rengoku","image":"https://cdn.myanimelist.net/images/characters/10/423443.jpg","anime":"Demon Slayer","genre":["Action","Dark Fantasy"]},{"id":64771,"name":"Tobio Kageyama","image":"https://cdn.myanimelist.net/images/characters/13/417874.jpg","anime":"Haikyuu!!","genre":["Slice of Life","Comedy"]},{"id":724,"name":"Usopp","image":"https://cdn.myanimelist.net/images/characters/16/188076.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":19565,"name":"Yui Hirasawa","image":"https://cdn.myanimelist.net/images/characters/6/326131.jpg","anime":"K-On!","genre":["Comedy","Slice of Life"]},{"id":82525,"name":"Shiro","image":"https://cdn.myanimelist.net/images/characters/16/246723.jpg","anime":"No Game No Life","genre":["Comedy","Fantasy"]},{"id":22369,"name":"Kanade Tachibana","image":"https://cdn.myanimelist.net/images/characters/10/289337.jpg","anime":"Angel Beats!","genre":["Drama","Supernatural"]},{"id":137825,"name":"Tanya von Degurechaff","image":"https://cdn.myanimelist.net/images/characters/2/512958.jpg","anime":"Saga of Tanya the Evil","genre":["Action","Historical"]},{"id":12055,"name":"Yoshikage Kira","image":"https://cdn.myanimelist.net/images/characters/13/241133.jpg","anime":"JoJo's Bizarre Adventure","genre":["Action","Supernatural"]},{"id":13580,"name":"Aslan Jade Callenreese","image":"https://cdn.myanimelist.net/images/characters/9/370360.jpg","anime":"Banana Fish","genre":["Thriller","Drama"]},{"id":104437,"name":"Juuzou Suzuya","image":"https://cdn.myanimelist.net/images/characters/6/275843.jpg","anime":"Tokyo Ghoul","genre":["Dark Fantasy","Psychological"]},{"id":116281,"name":"Momonga","image":"https://cdn.myanimelist.net/images/characters/10/508402.jpg","anime":"Overlord","genre":["Fantasy","Action"]},{"id":702,"name":"Nana Oosaki","image":"https://cdn.myanimelist.net/images/characters/7/28355.jpg","anime":"Nana","genre":["Romance","Drama"]},{"id":150824,"name":"Vladilena Milizé","image":"https://cdn.myanimelist.net/images/characters/15/428175.jpg","anime":"86 Eighty-Six","genre":["Sci-Fi","Action"]},{"id":19566,"name":"Mio Akiyama","image":"https://cdn.myanimelist.net/images/characters/11/48547.jpg","anime":"K-On!","genre":["Comedy","Slice of Life"]},{"id":164473,"name":"Kento Nanami","image":"https://cdn.myanimelist.net/images/characters/16/581424.jpg","anime":"Jujutsu Kaisen","genre":["Action","Supernatural"]},{"id":53901,"name":"Madara Uchiha","image":"https://cdn.myanimelist.net/images/characters/12/450359.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":1662,"name":"Gaara","image":"https://cdn.myanimelist.net/images/characters/10/293375.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":738,"name":"Lucy","image":"https://cdn.myanimelist.net/images/characters/5/44100.jpg","anime":"Elfen Lied","genre":["Dark Fantasy","Psychological"]},{"id":24482,"name":"Rin Okumura","image":"https://cdn.myanimelist.net/images/characters/10/114367.jpg","anime":"Blue Exorcist","genre":["Action","Supernatural"]},{"id":164470,"name":"Megumi Fushiguro","image":"https://cdn.myanimelist.net/images/characters/12/621887.jpg","anime":"Jujutsu Kaisen","genre":["Action","Supernatural"]},{"id":71611,"name":"Tooru Oikawa","image":"https://cdn.myanimelist.net/images/characters/6/245977.jpg","anime":"Haikyuu!!","genre":["Slice of Life","Comedy"]},{"id":53641,"name":"Deishuu Kaiki","image":"https://cdn.myanimelist.net/images/characters/13/155489.jpg","anime":"Monogatari","genre":["Supernatural","Drama"]},{"id":175198,"name":"Sukuna Ryoumen","image":"https://cdn.myanimelist.net/images/characters/6/431152.jpg","anime":"Jujutsu Kaisen","genre":["Action","Supernatural"]},{"id":110355,"name":"Phosphophyllite","image":"https://cdn.myanimelist.net/images/characters/16/355231.jpg","anime":"Land of the Lustrous","genre":["Sci-Fi","Fantasy"]},{"id":718,"name":"Kenzou Tenma","image":"https://cdn.myanimelist.net/images/characters/15/347641.jpg","anime":"Monster","genre":["Psychological","Thriller"]},{"id":147,"name":"Kenshin Himura","image":"https://cdn.myanimelist.net/images/characters/8/73810.jpg","anime":"Rurouni Kenshin","genre":["Action","Historical"]},{"id":507,"name":"Howl","image":"https://cdn.myanimelist.net/images/characters/4/83512.jpg","anime":"Howl's Moving Castle","genre":["Fantasy","Romance"]},{"id":143196,"name":"Ai Hayasaka","image":"https://cdn.myanimelist.net/images/characters/8/504012.jpg","anime":"Kaguya-sama Love is War","genre":["Romance","Comedy"]},{"id":1555,"name":"Hinata Hyuuga","image":"https://cdn.myanimelist.net/images/characters/6/278736.jpg","anime":"Naruto","genre":["Action","Adventure"]},{"id":51347,"name":"Akeno Himejima","image":"https://cdn.myanimelist.net/images/characters/3/150013.jpg","anime":"High School DxD","genre":["Action","Supernatural"]},{"id":66171,"name":"Kyouko Hori","image":"https://cdn.myanimelist.net/images/characters/16/318188.jpg","anime":"Horimiya","genre":["Romance","Slice of Life"]},{"id":674,"name":"Kagura","image":"https://cdn.myanimelist.net/images/characters/2/505912.jpg","anime":"Gintama","genre":["Comedy","Action"]},{"id":75,"name":"Ryuk","image":"https://cdn.myanimelist.net/images/characters/10/59125.jpg","anime":"Death Note","genre":["Psychological","Thriller"]},{"id":35253,"name":"Mayuri Shiina","image":"https://cdn.myanimelist.net/images/characters/4/131329.jpg","anime":"Steins;Gate","genre":["Sci-Fi","Thriller"]},{"id":67327,"name":"Yuu Nishinoya","image":"https://cdn.myanimelist.net/images/characters/14/238027.jpg","anime":"Haikyuu!!","genre":["Slice of Life","Comedy"]},{"id":63351,"name":"Akame","image":"https://cdn.myanimelist.net/images/characters/8/253095.jpg","anime":"Akame ga Kill","genre":["Action","Dark Fantasy"]},{"id":18344,"name":"Tomoe","image":"https://cdn.myanimelist.net/images/characters/14/190494.jpg","anime":"Kamisama Kiss","genre":["Romance","Supernatural"]},{"id":146736,"name":"Shinobu Kochou","image":"https://cdn.myanimelist.net/images/characters/3/386591.jpg","anime":"Demon Slayer","genre":["Action","Dark Fantasy"]},{"id":146735,"name":"Giyuu Tomioka","image":"https://cdn.myanimelist.net/images/characters/3/423445.jpg","anime":"Demon Slayer","genre":["Action","Dark Fantasy"]},{"id":65239,"name":"Esdeath","image":"https://cdn.myanimelist.net/images/characters/12/265641.jpg","anime":"Akame ga Kill","genre":["Action","Dark Fantasy"]},{"id":80491,"name":"Shouya Ishida","image":"https://cdn.myanimelist.net/images/characters/8/302316.jpg","anime":"A Silent Voice","genre":["Drama","Romance"]},{"id":12531,"name":"Ciel Phantomhive","image":"https://cdn.myanimelist.net/images/characters/9/253757.jpg","anime":"Black Butler","genre":["Action","Supernatural"]},{"id":8455,"name":"Death the Kid","image":"https://cdn.myanimelist.net/images/characters/3/102169.jpg","anime":"Soul Eater","genre":["Action","Supernatural"]},{"id":170329,"name":"Yor Forger","image":"https://cdn.myanimelist.net/images/characters/11/457934.jpg","anime":"Spy x Family","genre":["Comedy","Action"]},{"id":207,"name":"Tooru Honda","image":"https://cdn.myanimelist.net/images/characters/2/384113.jpg","anime":"Fruits Basket","genre":["Romance","Drama"]},{"id":87277,"name":"Touka Kirishima","image":"https://cdn.myanimelist.net/images/characters/16/234699.jpg","anime":"Tokyo Ghoul","genre":["Dark Fantasy","Psychological"]},{"id":119413,"name":"Yumeko Jabami","image":"https://cdn.myanimelist.net/images/characters/10/467162.jpg","anime":"Kakegurui","genre":["Psychological","Thriller"]},{"id":77605,"name":"Ban","image":"https://cdn.myanimelist.net/images/characters/14/267813.jpg","anime":"The Seven Deadly Sins","genre":["Action","Fantasy"]},{"id":2072,"name":"Ace Portgas D.","image":"https://cdn.myanimelist.net/images/characters/2/72220.jpg","anime":"One Piece","genre":["Adventure","Action","Comedy"]},{"id":4604,"name":"Nagisa Furukawa","image":"https://cdn.myanimelist.net/images/characters/3/300961.jpg","anime":"Clannad","genre":["Romance","Drama"]},{"id":1795,"name":"Motoko Kusanagi","image":"https://cdn.myanimelist.net/images/characters/2/314931.jpg","anime":"Ghost in the Shell","genre":["Sci-Fi","Action"]}];
+
+const PAGE = 20;
+let filtered = [...ALL];
+let shown = 0;
+let activeGenre = 'All';
+
+// Build genre pills
+const genres = ['All', ...new Set(ALL.flatMap(c => c.genre).filter(g => g !== 'Unknown'))].sort((a,b) => a==='All'?-1:b==='All'?1:a.localeCompare(b));
+const bar = document.getElementById('filters-bar');
+genres.forEach(g => {
+  const btn = document.createElement('button');
+  btn.className = 'pill' + (g === 'All' ? ' active' : '');
+  btn.textContent = g;
+  btn.onclick = () => setGenre(g, btn);
+  bar.appendChild(btn);
+});
+
+// Hero cards
+const heroImgs = [ALL[0], ALL[2], ALL[3]];
+const hc = document.getElementById('hero-cards');
+heroImgs.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'hero-card';
+  d.innerHTML = `<img src="${c.image}" alt="${c.name}" loading="lazy">`;
+  hc.appendChild(d);
+});
+
+function buildCard(c, i) {
+  const d = document.createElement('div');
+  d.className = 'char-card';
+  d.style.animationDelay = (i % PAGE * 0.03) + 's';
+  d.innerHTML = `
+    <div class="char-card-img">
+      <img src="${c.image}" alt="${c.name}" loading="lazy">
+      <div class="char-overlay">
+        <span class="char-like" onclick="event.stopPropagation();toggleLike(this)">♡</span>
+      </div>
+    </div>
+    <div class="char-card-info">
+      <div class="char-name">${c.name}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+        <span class="char-genre-tag">${c.genre[0] || ''}</span>
+        <span class="char-anime">${c.anime !== 'Unknown' ? c.anime : ''}</span>
+      </div>
+    </div>`;
+  return d;
+}
+
+function renderMore() {
+  const grid = document.getElementById('cards-grid');
+  const batch = filtered.slice(shown, shown + PAGE);
+  batch.forEach((c, i) => grid.appendChild(buildCard(c, shown + i)));
+  shown += batch.length;
+  document.getElementById('grid-count').textContent = `${shown} of ${filtered.length}`;
+  document.getElementById('load-more-wrap').style.display = shown >= filtered.length ? 'none' : '';
+}
+
+function reset() {
+  shown = 0;
+  document.getElementById('cards-grid').innerHTML = '';
+  renderMore();
+}
+
+function setGenre(g, btn) {
+  activeGenre = g;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const q = document.getElementById('search-input').value.toLowerCase();
+  applyFilters(q);
+}
+
+function onSearch() {
+  const q = this.value !== undefined ? this.value.toLowerCase() : document.getElementById('search-input').value.toLowerCase();
+  applyFilters(q);
+}
+
+function applyFilters(q) {
+  filtered = ALL.filter(c => {
+    const genreOk = activeGenre === 'All' || c.genre.includes(activeGenre);
+    const searchOk = !q || c.name.toLowerCase().includes(q) || c.anime.toLowerCase().includes(q);
+    return genreOk && searchOk;
+  });
+  reset();
+}
+
+function loadMore() { renderMore(); }
+function toggleLike(el) {
+  el.classList.toggle('liked');
+  el.textContent = el.classList.contains('liked') ? '♥' : '♡';
+}
+
+reset();
+</script>
+</body>
+</html>
